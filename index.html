@@ -1,0 +1,67 @@
+<html>
+  <head>
+    <title> Temp. API</title>
+  </head>
+
+  <body>
+    <div id="tempFive">
+
+    </div>
+    <script src='js/jquery-1.12.0.min.js'></script>
+    <script src='js/jquery.min.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+    <script src='js/jquery.mCustomScrollbar.concat.min.js'></script>
+    <script>
+
+    fiveDays(524901);
+
+    function fiveDays(id){
+      var appKey = "5cfdaac4c096563bcd39c629ac87f25a";
+      $.ajax({ 
+        type: 'GET',
+        dataType: 'json',
+        url: 'http://api.openweathermap.org/data/2.5/forecast',
+        async: true,
+        data: 
+        {
+          id: id,
+          appid: appKey,
+        },
+        success: function (response) {
+          console.log("5 Days"); // geral
+          //console.log(response); // geral
+          console.log(response.city.name); // nome da cidade
+          console.log(response.list["0"].main.temp); // temperatura
+          console.log(response.list["0"].dt_txt); // data e hora do dado 
+        },
+        error: function (jqXHR, exception) {
+          msg = "Undefined Error";
+          if (jqXHR.status === 0) {
+            msg = "Not connect.\n Verify Network.";
+          } else if (jqXHR.status == 404) {
+            msg = "Requested page not found. [404]";
+          } else if (jqXHR.status == 500) {
+            msg = "Internal Server Error [500].";
+          } else if (exception === "parsererror") {
+            msg = "Requested JSON parse failed.";
+          } else if (exception === "timeout") {
+            msg = "Time out error.";
+          } else if (exception === "abort") {
+            msg = "Ajax request aborted.";
+          } else {
+            msg = "Uncaught Error.\n" + jqXHR.responseText;
+          }
+          console.log(msg);
+        }
+      });
+    }
+
+    function city(){
+      $.each(temp,function(key, value) {
+        $select.append('<option value=' + key + '>' + value + '</option>');
+      });
+    }
+    </script>
+  </body>
+
+</html>
