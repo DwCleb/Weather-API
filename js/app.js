@@ -15,62 +15,117 @@ function forecast(id) {
       appid: appKey,
     },
     success: function (response) {
-      //console.log("5 Days"); // geral
       console.log(response); // geral
-      //console.log(response.city.name); // nome da cidade
-      //console.log(response.list["0"].main.temp); // temperatura
-      //console.log(response.list["0"].dt_txt); // data e hora do dado 
       //gerar as 5 datas
-      
+      var media = 0;
       var dates = [];
+      var temps = [];
+      var descs = [];
+      var icons = [];
 
+      //obtenção das datas para consulta
       for (let index = 0; index < response.list.length; index++) {
         date = response.list[index].dt_txt.split(" ");
         dates[index] = date[0];
       }
-
+      //tratamento das datas
       var newDates = dates.filter(function (here, i) {
         return dates.indexOf(here) == i;
       });
-      var superDates = newDates;
+      //./
       
-      var temps = [];
-
+      //obtenção da temperatura, descriçãoe icone atráves da data
       for (let index = 0; index < response.list.length; index++) {
         date = response.list[index].dt_txt.split(" ");
         if(newDates.indexOf(date[0]) > -1){
           temps[index] = response.list[index].main.temp;
+          descs[index] = response.list[index].weather[0].description;
+          icons[index] = response.list[index].weather[0].icon;
+          // exclui a data já usada
           var delet = newDates.indexOf(date[0]);
           if ( delet > -1) {
             newDates.splice(delet, 1);
           }
+          //./
         }
       }
+      //./
 
+      //tratamento das temperaturas
       var newTemps = temps.filter(function (here, i) {
         return temps.indexOf(here) == i;
       });
       temps = newTemps;
+      //./
+      
+      //tratamento das descrições
+      var newdDescs = descs.filter(function (here, i) {
+        return descs.indexOf(here) == i;
+      });
+      descs = newdDescs;
+      //./
+      //tratamento das descrições
+      var newdIcons = icons.filter(function (here, i) {
+        return icons.indexOf(here) == i;
+      });
+      icons = newdIcons;
+      //./
 
+      // reobtenção das datas que foram utilizadas e perdidas da memória
       for (let index = 0; index < response.list.length; index++) {
         date = response.list[index].dt_txt.split(" ");
         dates[index] = date[0];
       }
-
+      //tratamento das datas
       var dates = dates.filter(function (here, i) {
         return dates.indexOf(here) == i;
       });
 
+      //./
+
+      //modelagem da tabela para exibição dos dados
+      table = "<thead>";
+      table += "<tr>";
+      table += "<th style='text-align:center;'>#</th>";
+      table += "<th style='text-align:center;'>Weather</th>";
+      table += "<th style='text-align:center;'>Temperature</th>";
+      table += "<th style='text-align:center;'>Date</th>";
+      table += "</tr>";
+      table += "</thead>";
+      table += " <tbody>";
+      //construção da tabela
       for (let index = 0; index < temps.length; index++) {
-        console.log(dates[index] + " - " + temps[index]);
+        table += "<tr>";
+        table += "<th scope=\"row\">" + (index + 1) + "</th> ";
+        table += "<td><img src=\"https://openweathermap.org/img/w/" + icons[index] + ".png\" width=\"50\" height=\"50\" ></td> ";
+        table += "<td><h4><strong>" + convert(temps[index]) + " °F</strong></h4><span style=\"font-size: 10pt;\">" + descs[index] + "</span></td> ";
+        table += "<td>" + dates[index] + "</td> ";
+        table += "</tr> ";
+
+        media += temps[index];
+        qtdDays = index;
       }
-       
-      /*document.getElementById("MainTemp").innerHTML = response.list["0"].main.temp + " °F";
+      media = (media/(qtdDays + 1));
+      table += "<tr>";
+      table += "<td colspan='6'>";
+      table += "<center> Forecast average <strong>" + convert(media) + " °F</strong></center>";
+      table += "</td>";
+      table += "</tr>";
+      table += " </tbody>";
+      //./
+      //./
+
+      //Envio das informações
+      document.getElementById("infoCurrent").style.display = "none";
+      document.getElementById("tableWeather").innerHTML = table;
+      document.getElementById("selectCity").innerHTML = response.city.name;
+      document.getElementById("selectCountry").innerHTML = response.city.country;
+      //./
        $("#resultContainer").fadeIn(500);
        $('html, body').animate({
          scrollTop: $('#footer').offset().top - 50
        }, "slow");
-       */
+       
     },
     error: function (jqXHR, exception) {
       msg = "Undefined Error";
@@ -107,11 +162,8 @@ function currentD(id) {
       appid: appKey,
     },
     success: function (response) {
-      //console.log("5 Days"); // geral
-      console.log(response); // geral
-      //console.log(response.city.name); // nome da cidade
-      //console.log(response.list["0"].main.temp); // temperatura
-      //console.log(response.list["0"].dt_txt); // data e hora do dado 
+      //console.log(response); // geral
+      document.getElementById("infoCurrent").style.display = "block";
       document.getElementById("MainTemp").innerHTML = convert(response.main.temp) + " °F";
       document.getElementById("imgWeather").src = img + response.weather[0].icon + ".png";
       document.getElementById("description").innerHTML = response.weather[0].description;
@@ -150,16 +202,16 @@ function city() {
   $.ajax({
     type: 'GET',
     dataType: 'json',
-    url: 'https://raw.githubusercontent.com/dwcleb/Weather-API---openWeatherMap/master/city.list.json',
+    url: 'https://raw.githubusercontent.com/dwcleb/Weather-API---openWeatherMap/master/city.list.min.json',
     async: true,
     success: function (response) {
-      console.log(response.length);
+      //console.log(response.length);
       // for (let index = 0; index < response.length; index++) {
-      for (let index = 0; index < 2; index++) {
+      for (let index = 0; index < response.length; index++) {
         if (response[index].country == country) {
           let cityName = response[index].name;
           let cityId = response[index].id;
-          console.log(cityId);
+          //console.log(cityId);
           option = "<option value = " + cityId + ">" + cityName + "</option>";
           $("#city").append(option);
         }
@@ -193,10 +245,10 @@ function country() {
   $.ajax({
     type: 'GET',
     dataType: 'json',
-    url: 'C:/Users/dwcle/Desktop/aubay/API/country.list.json',
+    url: 'https://raw.githubusercontent.com/dwcleb/Weather-API---openWeatherMap/master/country.list.json',
     async: true,
     success: function (response) {
-      console.log(response.length);
+      //console.log(response.length);
       // for (let index = 0; index < response.length; index++) {
       option = "";
       var c = [];
