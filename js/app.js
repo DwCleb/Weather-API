@@ -12,7 +12,7 @@ function forecast(id) {
   $.ajax({
     type: 'GET',
     dataType: 'json',
-    url: 'http://api.openweathermap.org/data/2.5/forecast',
+    url: 'https://api.openweathermap.org/data/2.5/forecast',
     async: true,
     data: {
       id: id,
