@@ -344,6 +344,4 @@ function change() {
   var check = document.getElementById("temperature");
   if(check.checked) document.getElementById('tmpType').innerHTML = "Fahrenheit";
   else document.getElementById('tmpType').innerHTML = "Celsius";
-  $("#resultContainer").fadeOut(500);
-  //$("#container").fadeOut(500);
 }
