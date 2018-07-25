@@ -307,12 +307,20 @@ function currentData() {
   current = true;
   container();
   $("select[name=country]").val("#");
+  document.getElementById("btnCurrent").style.backgroundColor = "#5bc0de";
+  document.getElementById("btnCurrent").style.color = "#fff";
+  document.getElementById("btnForecast").style.backgroundColor = "#fff";
+  document.getElementById("btnForecast").style.color = "#000";
 }
 
 function forecastData() {
   current = false;
   container();
   $("select[name=country]").val("#");
+  document.getElementById("btnForecast").style.backgroundColor = "#5bc0de";
+  document.getElementById("btnForecast").style.color = "#fff";
+  document.getElementById("btnCurrent").style.backgroundColor = "#fff";
+  document.getElementById("btnCurrent").style.color = "#000";
 
 }
 
